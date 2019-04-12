@@ -17,8 +17,6 @@ def parse_args():
         parsed input arguments
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--verbose', required=False, action='store_true',
-            help='If present, more information about processes will be printed.')
     parser.add_argument('-i', '--input', required=True, help='\
             Specifies path to input CSV with instruments IDs')
     parser.add_argument('-o', '--output', required=False, default='./outputs',
@@ -48,6 +46,21 @@ def read_input_instruments(input_f_path):
 
 
 def query_plus500_instruments(instruments, timeout=0):
+    """
+    Query each of the instrument for data from plus500 website.
+
+    Parameters
+    ----------
+    instruments: list of str
+        instruments to get the data for
+    timeout: float
+        timeout in seconds to wait between requests
+
+    Returns
+    -------
+    dict
+        keys are instrument names and values tuples of data
+    """
     all_data = {}
     for instrument in instruments:
         print('Requesting data for instrument {}...'.format(instrument))
