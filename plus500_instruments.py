@@ -94,11 +94,13 @@ def parse_response(response_content):
     """
     sell_percent_match = re.search(r"UsersSellPercentage: '(\d+)'", response_content)
     buy_percent_match = re.search(r"UsersBuyPercentage: '(\d+)'", response_content)
-    if sell_percent_match and buy_percent_match:
+    price_match = re.findall(r"SellPrice:\s*'(?P<price>[\d\.]+)'", response_content)
+    if sell_percent_match and buy_percent_match and price_match:
         sell_percent = float(sell_percent_match.groups()[0])
         buy_percent = float(buy_percent_match.groups()[0])
         imbalance = buy_percent - sell_percent
-        return buy_percent, sell_percent, imbalance
+        price = float(price_match[0])
+        return buy_percent, sell_percent, imbalance, price
     return None
 
 
@@ -140,7 +142,7 @@ def output_data(all_data, output_dir):
     print('Saving data to CSV files...')
     date = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
     fieldnames = ['timestamp', 'instrumentID', 'buyersPercentage',
-            'sellersPercentage', 'imbalance']
+            'sellersPercentage', 'imbalance', 'price']
     for instrument in all_data.keys():
         output_instrument_data(instrument, all_data[instrument])
     output_main_file()
